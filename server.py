@@ -36,17 +36,29 @@ class SimpleServer():
         #socket.AF_INET is used for IPv4 addresses
         #socket.SOCK_STREAM is used for TCP connections
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            self.server_socket = s
             s.bind((self.host, self.port))
             s.listen(5)
+            s.settimeout(1.0)  # Set timeout to allow periodic checks for self.running
             print(f"Server listening on {self.host}:{self.port}")
             try:
                 while self.running:
-                    conn, addr = s.accept()
-                    client_thread = threading.Thread(target=self.handle_client, args=(conn, addr), daemon=True)
-                    client_thread.start()
+                    try:
+                        conn, addr = s.accept()
+                        client_thread = threading.Thread(target=self.handle_client, args=(conn, addr), daemon=True)
+                        client_thread.start()
+                    except socket.timeout:
+                        continue
             except KeyboardInterrupt:
                 print("Server is shutting down.")
+            finally:
                 self.running = False
+                print("Server has stopped.")
+                
+    def stop(self):
+        self.running = False
+        if self.server_socket:
+            self.server_socket.close()
 if __name__ == "__main__":
     ngrok.set_auth_token("auth_token_here")
     tcp_tunnel = ngrok.connect(23901, "tcp")
