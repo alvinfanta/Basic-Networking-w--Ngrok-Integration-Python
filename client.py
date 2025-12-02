@@ -56,7 +56,7 @@ class ClientProgram:
         while True:
             try:
                 msg = input(f"{self.username}: ")
-                full_msg = f"[{self.username}]: {msg}"
+                full_msg = f"{self.username}: {msg}"
                 self.sock.sendall(full_msg.encode())
             except EOFError:
                 # Handle Ctrl+D or unexpected input closure
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # You can change these defaults or use input()
     os.system('cls' if os.name == 'nt' else 'clear')
     IP = input("Enter server IP: ")
-    PORT = input("Enter server Port: ")
+    PORT = int(input("Enter server Port: "))
     Username = input("Enter your username: ")
     os.system('cls' if os.name == 'nt' else 'clear')
     ClientProgram(IP, PORT, Username)

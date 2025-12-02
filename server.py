@@ -103,6 +103,9 @@ class SimpleServer():
                 print("Server has stopped.")
 
 if __name__ == "__main__":
+    
     server = SimpleServer()
     os.system('cls' if os.name == 'nt' else 'clear')
+    
     server.start()
+    
