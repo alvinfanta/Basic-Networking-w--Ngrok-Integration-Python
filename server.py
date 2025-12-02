@@ -40,6 +40,11 @@ class SimpleServer():
                     
                     text = data.decode(errors="ignore")
                     
+                    # FILTER: Ignore HTTP requests from browsers (GET, POST, etc.)
+                    if text.startswith(("GET /", "POST /", "HEAD /", "Host:", "User-Agent:")):
+                        print(f"[Log] Ignored HTTP request from {addr}")
+                        continue
+
                     # 1. Handshake: "Username:joined"
                     if text.endswith(":joined"):
                         username = text.split(":")[0]
@@ -72,7 +77,7 @@ class SimpleServer():
             
             # 2. Broadcast departure (only if they had actually joined)
             if disconnected_user:
-                print(f"{disconnected_user} has left.")
+                print(f"{disconnected_user} has left.") 
                 self.broadcast(None, f"{disconnected_user} has left the chat.")
         
     def start(self):
@@ -103,9 +108,6 @@ class SimpleServer():
                 print("Server has stopped.")
 
 if __name__ == "__main__":
-    
     server = SimpleServer()
     os.system('cls' if os.name == 'nt' else 'clear')
-    
     server.start()
-    
